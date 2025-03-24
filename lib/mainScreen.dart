@@ -9,12 +9,16 @@ class Mainscreen extends StatefulWidget {
 }
 
 class _MainscreenState extends State<Mainscreen> {
+  List<dynamic> bucketListData = [];
+
   Future<void> getData() async {
     try {
       Response response = await Dio().get(
           "https://fluttertestapi-123-default-rtdb.firebaseio.com/bucketlist.json");
 
-      print(response.statusCode);
+      bucketListData = response.data;
+
+      setState(() {});
     } catch (e) {
       showDialog(
           context: context,
@@ -35,8 +39,30 @@ class _MainscreenState extends State<Mainscreen> {
         title: Text("Bucket List"),
         centerTitle: true,
       ),
-      body: Center(
-          child: ElevatedButton(onPressed: getData, child: Text("Get Data"))),
+      body: Column(
+        children: [
+          (ElevatedButton(onPressed: getData, child: Text("Get Data"))),
+          Expanded(
+            child: ListView.builder(
+                itemCount: bucketListData.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        radius: 25,
+                        backgroundImage:
+                            NetworkImage(bucketListData[index]['Image'] ?? ""),
+                      ),
+                      title: Text(bucketListData[index]['Item'] ?? ""),
+                      trailing:
+                          Text(bucketListData[index]['Cost'].toString() ?? ""),
+                    ),
+                  );
+                }),
+          )
+        ],
+      ),
     );
   }
 }

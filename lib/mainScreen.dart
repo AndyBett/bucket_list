@@ -10,10 +10,22 @@ class Mainscreen extends StatefulWidget {
 
 class _MainscreenState extends State<Mainscreen> {
   Future<void> getData() async {
-    Response response = await Dio().get(
-        "https://fluttertestapi-123-default-rtdb.firebaseio.com/bucketlist.json");
+    try {
+      Response response = await Dio().get(
+          "https://fluttertestapi-123-default-rtdb.firebaseio.com/bucketlist.json");
 
-    print(response.statusCode);
+      print(response.statusCode);
+    } catch (e) {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text("Apologies,"),
+              content: Text(
+                  "There is an issue with the server, try after a few seconds"),
+            );
+          });
+    }
   }
 
   @override

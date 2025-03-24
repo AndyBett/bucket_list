@@ -10,20 +10,28 @@ class Mainscreen extends StatefulWidget {
 
 class _MainscreenState extends State<Mainscreen> {
   List<dynamic> bucketListData = [];
+  bool isLoading = false;
 
   Future<void> getData() async {
+    setState(() {
+      isLoading = true;
+    });
     try {
       Response response = await Dio().get(
           "https://fluttertestapi-123-default-rtdb.firebaseio.com/bucketlist.json");
 
       bucketListData = response.data;
 
+      isLoading = false;
+
       setState(() {});
     } catch (e) {
+      isLoading = false;
+      setState(() {});
       showDialog(
           context: context,
           builder: (context) {
-            return AlertDialog(
+            return const AlertDialog(
               title: Text("Apologies,"),
               content: Text(
                   "There is an issue with the server, try after a few seconds"),
@@ -33,36 +41,50 @@ class _MainscreenState extends State<Mainscreen> {
   }
 
   @override
+  void initState() {
+    getData();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Bucket List"),
-        centerTitle: true,
-      ),
-      body: Column(
-        children: [
-          (ElevatedButton(onPressed: getData, child: Text("Get Data"))),
-          Expanded(
-            child: ListView.builder(
-                itemCount: bucketListData.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        radius: 25,
-                        backgroundImage:
-                            NetworkImage(bucketListData[index]['Image'] ?? ""),
+        appBar: AppBar(
+          title: const Text("Bucket List"),
+          centerTitle: true,
+          actions: [
+            InkWell(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(Icons.refresh),
+              ),
+              onTap: getData,
+            )
+          ],
+        ),
+        body: RefreshIndicator(
+          onRefresh: () async {
+            getData();
+          },
+          child: isLoading
+              ? Center(child: CircularProgressIndicator())
+              : ListView.builder(
+                  itemCount: bucketListData.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          radius: 25,
+                          backgroundImage: NetworkImage(
+                              bucketListData[index]['Image'] ?? ""),
+                        ),
+                        title: Text(bucketListData[index]['Item'] ?? ""),
+                        trailing: Text(
+                            bucketListData[index]['Cost'].toString() ?? ""),
                       ),
-                      title: Text(bucketListData[index]['Item'] ?? ""),
-                      trailing:
-                          Text(bucketListData[index]['Cost'].toString() ?? ""),
-                    ),
-                  );
-                }),
-          )
-        ],
-      ),
-    );
+                    );
+                  }),
+        ));
   }
 }

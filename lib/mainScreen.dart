@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 
 class Mainscreen extends StatefulWidget {
   const Mainscreen({super.key});
@@ -8,7 +9,12 @@ class Mainscreen extends StatefulWidget {
 }
 
 class _MainscreenState extends State<Mainscreen> {
-  void getData() {}
+  Future<void> getData() async {
+    Response response = await Dio().get(
+        "https://fluttertestapi-123-default-rtdb.firebaseio.com/bucketlist.json");
+
+    print(response.statusCode);
+  }
 
   @override
   Widget build(BuildContext context) {

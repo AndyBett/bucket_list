@@ -1,3 +1,4 @@
+import 'package:bucket_list/addBucketList.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 
@@ -49,6 +50,15 @@ class _MainscreenState extends State<Mainscreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return Addbucketlist();
+            }));
+          },
+          child: Icon(Icons.add),
+          shape: CircleBorder(),
+        ),
         appBar: AppBar(
           title: const Text("Bucket List"),
           centerTitle: true,

@@ -1,3 +1,4 @@
+import 'package:bucket_list/addBucketList.dart';
 import 'package:bucket_list/mainScreen.dart';
 import 'package:flutter/material.dart';
 
@@ -16,9 +17,9 @@ class _myAppState extends State<myApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      home: Mainscreen(),
       debugShowCheckedModeBanner: false,
       theme: ThemeData.light(useMaterial3: true),
-      home: Mainscreen(),
     );
   }
 }

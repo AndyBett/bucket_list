@@ -1,4 +1,5 @@
 import 'package:bucket_list/addBucketList.dart';
+import 'package:bucket_list/viewItem.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 
@@ -84,6 +85,15 @@ class _MainscreenState extends State<Mainscreen> {
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ListTile(
+                        onTap: () {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return Viewitem(
+                              title: bucketListData[index]['Item'] ?? "",
+                              image: bucketListData[index]['Image'] ?? "",
+                            );
+                          }));
+                        },
                         leading: CircleAvatar(
                           radius: 25,
                           backgroundImage: NetworkImage(

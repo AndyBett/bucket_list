@@ -65,8 +65,8 @@ class _MainscreenState extends State<Mainscreen> {
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
                   return Viewitem(
-                    title: bucketListData[index]['Item'] ?? "",
-                    image: bucketListData[index]['Image'] ?? "",
+                    title: bucketListData[index]['Item'] ?? " ",
+                    image: bucketListData[index]['Image'] ?? " ",
                   );
                 }));
               },

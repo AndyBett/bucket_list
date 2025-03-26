@@ -13,6 +13,7 @@ class Mainscreen extends StatefulWidget {
 class _MainscreenState extends State<Mainscreen> {
   List<dynamic> bucketListData = [];
   bool isLoading = false;
+  bool isError = false;
 
   Future<void> getData() async {
     setState(() {
@@ -25,20 +26,13 @@ class _MainscreenState extends State<Mainscreen> {
       bucketListData = response.data;
 
       isLoading = false;
+      isError = false;
 
       setState(() {});
     } catch (e) {
       isLoading = false;
+      isError = true;
       setState(() {});
-      showDialog(
-          context: context,
-          builder: (context) {
-            return const AlertDialog(
-              title: Text("Apologies,"),
-              content: Text(
-                  "There is an issue with the server, try after a few seconds"),
-            );
-          });
     }
   }
 
@@ -46,6 +40,46 @@ class _MainscreenState extends State<Mainscreen> {
   void initState() {
     getData();
     super.initState();
+  }
+
+  Widget errorWidget() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.warning),
+          Text("Error getting bucket list Data!"),
+          ElevatedButton(onPressed: getData, child: Text("Try Again"))
+        ],
+      ),
+    );
+  }
+
+  Widget ListDataWidget() {
+    return ListView.builder(
+        itemCount: bucketListData.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ListTile(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return Viewitem(
+                    title: bucketListData[index]['Item'] ?? "",
+                    image: bucketListData[index]['Image'] ?? "",
+                  );
+                }));
+              },
+              leading: CircleAvatar(
+                radius: 25,
+                backgroundImage:
+                    NetworkImage(bucketListData[index]['Image'] ?? ""),
+              ),
+              title: Text(bucketListData[index]['Item'] ?? ""),
+              trailing: Text(bucketListData[index]['Cost'].toString() ?? ""),
+            ),
+          );
+        });
   }
 
   @override
@@ -74,37 +108,13 @@ class _MainscreenState extends State<Mainscreen> {
           ],
         ),
         body: RefreshIndicator(
-          onRefresh: () async {
-            getData();
-          },
-          child: isLoading
-              ? Center(child: CircularProgressIndicator())
-              : ListView.builder(
-                  itemCount: bucketListData.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListTile(
-                        onTap: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return Viewitem(
-                              title: bucketListData[index]['Item'] ?? "",
-                              image: bucketListData[index]['Image'] ?? "",
-                            );
-                          }));
-                        },
-                        leading: CircleAvatar(
-                          radius: 25,
-                          backgroundImage: NetworkImage(
-                              bucketListData[index]['Image'] ?? ""),
-                        ),
-                        title: Text(bucketListData[index]['Item'] ?? ""),
-                        trailing: Text(
-                            bucketListData[index]['Cost'].toString() ?? ""),
-                      ),
-                    );
-                  }),
-        ));
+            onRefresh: () async {
+              getData();
+            },
+            child: isLoading
+                ? Center(child: CircularProgressIndicator())
+                : isError
+                    ? errorWidget()
+                    : ListDataWidget()));
   }
 }

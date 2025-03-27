@@ -23,7 +23,11 @@ class _MainscreenState extends State<Mainscreen> {
       Response response = await Dio().get(
           "https://fluttertestapi-123-default-rtdb.firebaseio.com/bucketlist.json");
 
-      bucketListData = response.data;
+      if (response.data is List) {
+        bucketListData = response.data;
+      } else {
+        bucketListData = [];
+      }
 
       isLoading = false;
       isError = false;
@@ -115,6 +119,8 @@ class _MainscreenState extends State<Mainscreen> {
                 ? Center(child: CircularProgressIndicator())
                 : isError
                     ? errorWidget()
-                    : ListDataWidget()));
+                    : bucketListData.length < 1
+                        ? Center(child: Text("No Data on bucket list"))
+                        : ListDataWidget()));
   }
 }

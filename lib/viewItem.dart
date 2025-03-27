@@ -15,6 +15,32 @@ class _ViewitemState extends State<Viewitem> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          PopupMenuButton(onSelected: (value) {
+            if (value == 1)
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text("Are you sure want to delete?"),
+                      actions: [
+                        InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text("Cancel")),
+                        SizedBox(),
+                        Text("Confirm")
+                      ],
+                    );
+                  });
+          }, itemBuilder: (context) {
+            return [
+              PopupMenuItem(value: 1, child: Text("Delete")),
+              PopupMenuItem(value: 2, child: Text("Mark as done"))
+            ];
+          })
+        ],
         title: Text("${widget.title}"),
       ),
       body: Column(

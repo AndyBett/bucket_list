@@ -48,7 +48,7 @@ class _ViewitemState extends State<Viewitem> {
       appBar: AppBar(
         actions: [
           PopupMenuButton(onSelected: (value) {
-            if (value == 1)
+            if (value == 1) {
               showDialog(
                   context: context,
                   builder: (context) {
@@ -60,11 +60,11 @@ class _ViewitemState extends State<Viewitem> {
                               Navigator.pop(context);
                             },
                             child: Text("Cancel")),
-                        SizedBox(),
                         InkWell(onTap: deleteData, child: Text("Confirm"))
                       ],
                     );
                   });
+            }
 
             if (value == 2) {
               markAsComplete();

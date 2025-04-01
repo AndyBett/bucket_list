@@ -60,39 +60,46 @@ class _MainscreenState extends State<Mainscreen> {
   }
 
   Widget ListDataWidget() {
-    return ListView.builder(
-        itemCount: bucketListData.length,
-        itemBuilder: (BuildContext context, int index) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: (bucketListData[index] is Map)
-                ? ListTile(
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return Viewitem(
-                          index: index,
-                          title: bucketListData[index]['Item'] ?? " ",
-                          image: bucketListData[index]['Image'] ?? " ",
-                        );
-                      })).then((value) {
-                        if (value == "refresh") {
-                          getData();
-                        }
-                      });
-                    },
-                    leading: CircleAvatar(
-                      radius: 25,
-                      backgroundImage:
-                          NetworkImage(bucketListData[index]?['Image'] ?? ""),
-                    ),
-                    title: Text(bucketListData[index]?['Item'] ?? ""),
-                    trailing:
-                        Text(bucketListData[index]?['Cost'].toString() ?? ""),
-                  )
-                : SizedBox(),
-          );
-        });
+    List<dynamic> filteredList = bucketListData
+        .where((element) => !(element?["completed"] ?? false))
+        .toList();
+
+    return filteredList.length < 1
+        ? Center(child: Text("No data on bucket List"))
+        : ListView.builder(
+            itemCount: bucketListData.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: (bucketListData[index] is Map &&
+                        (!(bucketListData[index]?["completed"] ?? false)))
+                    ? ListTile(
+                        onTap: () {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return Viewitem(
+                              index: index,
+                              title: bucketListData[index]['Item'] ?? " ",
+                              image: bucketListData[index]['Image'] ?? " ",
+                            );
+                          })).then((value) {
+                            if (value == "refresh") {
+                              getData();
+                            }
+                          });
+                        },
+                        leading: CircleAvatar(
+                          radius: 25,
+                          backgroundImage: NetworkImage(
+                              bucketListData[index]?['Image'] ?? ""),
+                        ),
+                        title: Text(bucketListData[index]?['Item'] ?? ""),
+                        trailing: Text(
+                            bucketListData[index]?['Cost'].toString() ?? ""),
+                      )
+                    : const SizedBox(),
+              );
+            });
   }
 
   @override

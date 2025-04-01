@@ -21,8 +21,22 @@ class _ViewitemState extends State<Viewitem> {
     Navigator.pop(context);
     try {
       Response response = await Dio().delete(
-          "https://fluttertestapi-123-default-rtdb.firebaseio.com/bucketlist.json");
-      Navigator.pop(context);
+          "https://fluttertestapi-123-default-rtdb.firebaseio.com/bucketlist/${widget.index}.json");
+
+      Navigator.pop(context, "refresh");
+    } catch (e) {
+      print("error");
+    }
+  }
+
+  Future<void> markAsComplete() async {
+    try {
+      Map<String, dynamic> data = {"completed": true};
+      Response response = await Dio().patch(
+          "https://fluttertestapi-123-default-rtdb.firebaseio.com/bucketlist/${widget.index}.json",
+          data: data);
+
+      Navigator.pop(context, "refresh");
     } catch (e) {
       print("error");
     }
@@ -51,6 +65,10 @@ class _ViewitemState extends State<Viewitem> {
                       ],
                     );
                   });
+
+            if (value == 2) {
+              markAsComplete();
+            }
           }, itemBuilder: (context) {
             return [
               PopupMenuItem(value: 1, child: Text("Delete")),

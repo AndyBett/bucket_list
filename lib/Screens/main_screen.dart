@@ -1,5 +1,5 @@
-import 'package:bucket_list/addBucketList.dart';
-import 'package:bucket_list/viewItem.dart';
+import 'package:bucket_list/Screens/add_screen.dart';
+import 'package:bucket_list/Screens/view_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 
@@ -108,8 +108,12 @@ class _MainscreenState extends State<Mainscreen> {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return Addbucketlist();
-            }));
+              return Addbucketlist(newIndex: bucketListData.length);
+            })).then((value) {
+              if (value == "refresh") {
+                getData();
+              }
+            });
           },
           child: Icon(Icons.add),
           shape: CircleBorder(),
